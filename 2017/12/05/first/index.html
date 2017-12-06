@@ -79,17 +79,19 @@
 
 
 
-<meta name="description" content="第一篇博客不知道说些什么，给大家拜个早年吧。">
+<meta name="description" content="不知道说些什么，先给大家拜个早年吧。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="我的第一篇博客">
 <meta property="og:url" content="http://yoursite.com/2017/12/05/first/index.html">
 <meta property="og:site_name" content="Hank&#39;s Zone">
-<meta property="og:description" content="第一篇博客不知道说些什么，给大家拜个早年吧。">
+<meta property="og:description" content="不知道说些什么，先给大家拜个早年吧。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-05T06:50:45.000Z">
+<meta property="og:image" content="http://yoursite.com/uploads/1512541982405.jpg">
+<meta property="og:updated_time" content="2017-12-06T08:04:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="我的第一篇博客">
-<meta name="twitter:description" content="第一篇博客不知道说些什么，给大家拜个早年吧。">
+<meta name="twitter:description" content="不知道说些什么，先给大家拜个早年吧。">
+<meta name="twitter:image" content="http://yoursite.com/uploads/1512541982405.jpg">
 
 
 
@@ -329,7 +331,43 @@
       
 
       
-        <h1 id="第一篇博客"><a href="#第一篇博客" class="headerlink" title="第一篇博客"></a>第一篇博客</h1><p>不知道说些什么，给大家拜个早年吧。</p>
+        <p><strong>不知道说些什么，先给大家拜个早年吧。</strong><br><a id="more"></a></p>
+<hr>
+<h1 id="使用Hexo快速搭建个人博客"><a href="#使用Hexo快速搭建个人博客" class="headerlink" title="使用Hexo快速搭建个人博客"></a>使用<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">Hexo</a>快速搭建个人博客</h1><p>这个博客也是我第一次搭建，使用Hexo加GitHub搭建。比较简单记录一下过程吧。</p>
+<h2 id="1-创建Github-域名和空间"><a href="#1-创建Github-域名和空间" class="headerlink" title="1.创建Github 域名和空间"></a>1.创建Github 域名和空间</h2><h3 id="1-1注册"><a href="#1-1注册" class="headerlink" title="1.1注册"></a>1.1注册</h3><p>首先注册一个<a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>账号，你注册时填写的<code>UserName</code>将是你的搭建后的域名空间。如:<a href="https://hankmax.github.io/" target="_blank" rel="noopener">https://hankmax.github.io/</a></p>
+<p><strong>记住这个username，以下所有username全替换成自己创建的username</strong></p>
+<h3 id="1-2创建博客托管仓库"><a href="#1-2创建博客托管仓库" class="headerlink" title="1.2创建博客托管仓库"></a>1.2创建博客托管仓库</h3><p>登陆你的github进入首页，点击<strong>New repository</strong>创建新仓库<br><img src="/uploads/1512541982405.jpg" alt=""><br>注意<strong>username</strong>要和你注册的username填写一致</p>
+<h2 id="2-安装Hexo"><a href="#2-安装Hexo" class="headerlink" title="2.安装Hexo"></a>2.安装Hexo</h2><p><strong>前置条件</strong></p>
+<ul>
+<li>已安装git</li>
+<li>已安装node</li>
+</ul>
+<p><strong>打开命令行，全局安装Hexo</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+<h2 id="3-创建配置Hexo项目"><a href="#3-创建配置Hexo项目" class="headerlink" title="3.创建配置Hexo项目"></a>3.创建配置Hexo项目</h2><h3 id="3-1初始化Hexo项目"><a href="#3-1初始化Hexo项目" class="headerlink" title="3.1初始化Hexo项目"></a>3.1初始化Hexo项目</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init username.github.io</span><br></pre></td></tr></table></figure>
+<p>成功过后就有一个当前目录就会有个名为username.github.io的文件夹</p>
+<h3 id="3-2-基础配置"><a href="#3-2-基础配置" class="headerlink" title="3.2    基础配置"></a>3.2    基础配置</h3><p><strong><em>主题安装</em></strong></p>
+<p>Hexo提供很多免费主题供你使用，在<a href="https://hexo.io/themes/" target="_blank" rel="noopener">主题</a>选择一个。克隆到你的项目目录中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cd username.github.io</span><br><span class="line"></span><br><span class="line">$ git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+<p><strong><em>项目配置</em></strong></p>
+<p>打开username.github.io/<code>_config.yml</code>文件修改基础配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: ___ //你博客的名字</span><br><span class="line">author: ___ //你的名字</span><br><span class="line">language: zh-Hans //语言 中文</span><br><span class="line">theme: next //刚刚安装的主题名称</span><br><span class="line">deploy:</span><br><span class="line">type: git //使用Git 发布</span><br><span class="line">repo: https://github.com/username/username.github.io.git // 刚创建的Github仓库</span><br></pre></td></tr></table></figure>
+<p>注意<strong>repo</strong>填写你在github创建的仓库的地址</p>
+<p>修改配置冒号后跟一个<strong>空格</strong>不然无法配置成功</p>
+<p><strong><em>主题配置</em></strong></p>
+<p>主题配置文件在username.github.io/themes/next/<code>_config.yml</code><br>具体配置可看各主题的文档进行配置，<a href="http://theme-next.iissnan.com/getting-started.html#theme-settings" target="_blank" rel="noopener">本主题配置文档</a></p>
+<p><strong><em>写文章</em></strong></p>
+<p>新建markdown文件，放到username.github.io/source/_posts目录下</p>
+<p>First.md</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">title: 第一篇博客 //文章标题</span><br><span class="line">categories:</span><br><span class="line">- 学习  //分类</span><br><span class="line">tags:</span><br><span class="line">- Hexo //标签</span><br><span class="line">___  </span><br><span class="line">。。。正文</span><br><span class="line">&lt;!-- more --&gt;. //文章分割</span><br><span class="line">。。。正文</span><br></pre></td></tr></table></figure>
+<p><strong><em>测试</em></strong></p>
+<p>$<code>hexo s</code><br>在项目目录下启动测试服务，打开<a href="https://localhost:4000" target="_blank" rel="noopener">https://localhost:4000 </a>访问</p>
+<h2 id="4-发布到github"><a href="#4-发布到github" class="headerlink" title="4.发布到github"></a>4.发布到github</h2><p>1.安装<a href="https://github.com/hexojs/
+hexo-deployer-git" target="_blank" rel="noopener">hexo-deployer-git</a>自动部署发布工具</p>
+<p>$<code>npm install hexo-deployer-git --save</code></p>
+<p>2.进行部署</p>
+<p>$<code>hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</code></p>
+<p>3.稍等片刻，打开<a href="http://username.github.io" target="_blank" rel="noopener">https://username.github.io</a>访问</p>
 
       
     </div>
@@ -350,22 +388,6 @@
       
       
 
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/05/categories/" rel="prev" title="分类和标签">
-                分类和标签 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
       
 
       
@@ -448,32 +470,14 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
             
 
             
-              
-              
-              <div class="site-state-item site-state-categories">
-                <a href="/categories/index.html">
-                  <span class="site-state-item-count">1</span>
-                  <span class="site-state-item-name">分类</span>
-                </a>
-              </div>
-            
 
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
             
 
           </nav>
@@ -505,7 +509,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一篇博客"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x7BC7;&#x535A;&#x5BA2;" class="headerlink" title="&#x7B2C;&#x4E00;&#x7BC7;&#x535A;&#x5BA2;"></a>&#x7B2C;&#x4E00;&#x7BC7;&#x535A;&#x5BA2;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用Hexo快速搭建个人博客"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x4F7F;&#x7528;Hexo&#x5FEB;&#x901F;&#x642D;&#x5EFA;&#x4E2A;&#x4EBA;&#x535A;&#x5BA2;" class="headerlink" title="&#x4F7F;&#x7528;Hexo&#x5FEB;&#x901F;&#x642D;&#x5EFA;&#x4E2A;&#x4EBA;&#x535A;&#x5BA2;"></a>&#x4F7F;&#x7528;<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">Hexo</a>&#x5FEB;&#x901F;&#x642D;&#x5EFA;&#x4E2A;&#x4EBA;&#x535A;&#x5BA2;</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-创建Github-域名和空间"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#1-&#x521B;&#x5EFA;Github-&#x57DF;&#x540D;&#x548C;&#x7A7A;&#x95F4;" class="headerlink" title="1.&#x521B;&#x5EFA;Github &#x57DF;&#x540D;&#x548C;&#x7A7A;&#x95F4;"></a>1.&#x521B;&#x5EFA;Github &#x57DF;&#x540D;&#x548C;&#x7A7A;&#x95F4;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1注册"><span class="nav-number">1.1.1.</span> <span class="nav-text"><a href="#1-1&#x6CE8;&#x518C;" class="headerlink" title="1.1&#x6CE8;&#x518C;"></a>1.1&#x6CE8;&#x518C;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2创建博客托管仓库"><span class="nav-number">1.1.2.</span> <span class="nav-text"><a href="#1-2&#x521B;&#x5EFA;&#x535A;&#x5BA2;&#x6258;&#x7BA1;&#x4ED3;&#x5E93;" class="headerlink" title="1.2&#x521B;&#x5EFA;&#x535A;&#x5BA2;&#x6258;&#x7BA1;&#x4ED3;&#x5E93;"></a>1.2&#x521B;&#x5EFA;&#x535A;&#x5BA2;&#x6258;&#x7BA1;&#x4ED3;&#x5E93;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-安装Hexo"><span class="nav-number">1.2.</span> <span class="nav-text"><a href="#2-&#x5B89;&#x88C5;Hexo" class="headerlink" title="2.&#x5B89;&#x88C5;Hexo"></a>2.&#x5B89;&#x88C5;Hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-创建配置Hexo项目"><span class="nav-number">1.3.</span> <span class="nav-text"><a href="#3-&#x521B;&#x5EFA;&#x914D;&#x7F6E;Hexo&#x9879;&#x76EE;" class="headerlink" title="3.&#x521B;&#x5EFA;&#x914D;&#x7F6E;Hexo&#x9879;&#x76EE;"></a>3.&#x521B;&#x5EFA;&#x914D;&#x7F6E;Hexo&#x9879;&#x76EE;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1初始化Hexo项目"><span class="nav-number">1.3.1.</span> <span class="nav-text"><a href="#3-1&#x521D;&#x59CB;&#x5316;Hexo&#x9879;&#x76EE;" class="headerlink" title="3.1&#x521D;&#x59CB;&#x5316;Hexo&#x9879;&#x76EE;"></a>3.1&#x521D;&#x59CB;&#x5316;Hexo&#x9879;&#x76EE;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-基础配置"><span class="nav-number">1.3.2.</span> <span class="nav-text"><a href="#3-2-&#x57FA;&#x7840;&#x914D;&#x7F6E;" class="headerlink" title="3.2    &#x57FA;&#x7840;&#x914D;&#x7F6E;"></a>3.2    &#x57FA;&#x7840;&#x914D;&#x7F6E;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-发布到github"><span class="nav-number">1.4.</span> <span class="nav-text"><a href="#4-&#x53D1;&#x5E03;&#x5230;github" class="headerlink" title="4.&#x53D1;&#x5E03;&#x5230;github"></a>4.&#x53D1;&#x5E03;&#x5230;github</span></a></li></ol></li></ol></div>
             
 
           </div>
