@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是RuntimeObjective-C语言是一门动态语言，就是尽可能地把决定从编译器推迟到运行期, 就是尽可能地做到动态. 只是在运行的时候才会去确定对象的类型和方法的. 因此利用Runtime机制可以在程序运行时动态地修改类和对象中的所有属性和方法.Runtime是OC底层的一套C语言的Api，编译器最终都会将OC代码转化为运行时的代码。通过终端命令编译.m文件:$clang -rewrit">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Runtime总结">
+<meta property="og:url" content="http://yoursite.com/2017/12/11/Runtime/index.html">
+<meta property="og:site_name" content="Hank&#39;s Zone">
+<meta property="og:description" content="什么是RuntimeObjective-C语言是一门动态语言，就是尽可能地把决定从编译器推迟到运行期, 就是尽可能地做到动态. 只是在运行的时候才会去确定对象的类型和方法的. 因此利用Runtime机制可以在程序运行时动态地修改类和对象中的所有属性和方法.Runtime是OC底层的一套C语言的Api，编译器最终都会将OC代码转化为运行时的代码。通过终端命令编译.m文件:$clang -rewrit">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-12T08:10:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Runtime总结">
+<meta name="twitter:description" content="什么是RuntimeObjective-C语言是一门动态语言，就是尽可能地把决定从编译器推迟到运行期, 就是尽可能地做到动态. 只是在运行的时候才会去确定对象的类型和方法的. 因此利用Runtime机制可以在程序运行时动态地修改类和对象中的所有属性和方法.Runtime是OC底层的一套C语言的Api，编译器最终都会将OC代码转化为运行时的代码。通过终端命令编译.m文件:$clang -rewrit">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/11/Runtime/"/>
+
+
+
+
+
+  <title>Runtime总结 | Hank's Zone</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e6c0060626c68c424035bbec7e39d5cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hank's Zone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Hank writing in here</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/11/Runtime/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hank Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/head.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hank's Zone">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Runtime总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-11T17:03:00+08:00">
+                2017-12-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习/" itemprop="url" rel="index">
+                    <span itemprop="name">学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是Runtime"><a href="#什么是Runtime" class="headerlink" title="什么是Runtime"></a>什么是Runtime</h2><p>Objective-C语言是一门动态语言，就是尽可能地把决定从编译器推迟到运行期, 就是尽可能地做到动态. 只是在运行的时候才会去确定对象的类型和方法的. 因此利用Runtime机制可以在程序运行时动态地修改类和对象中的所有属性和方法.<br>Runtime是OC底层的一套C语言的Api，编译器最终都会将OC代码转化为运行时的代码。通过终端命令编译<code>.m</code>文件:<code>$clang -rewrite-objc xxx.m</code>可以看到编译后的xxx.cpp(C++文件)<br><a id="more"></a><br>例如创建一个对象<code>[[NSObject alloc]init]</code>,最终被转换为几万行代码，截取关键的一句可以看到底层是如何通过runtime创建的对象。  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="comment">/* @autoreleasepool */</span> &#123; __AtAutoreleasePool __autoreleasepool; </span><br><span class="line"></span><br><span class="line">        ((<span class="built_in">NSObject</span> *(*)(<span class="keyword">id</span>, SEL))(<span class="keyword">void</span> *)objc_msgSend)((<span class="keyword">id</span>)</span><br><span class="line">        ((<span class="built_in">NSObject</span> *(*)(<span class="keyword">id</span>, SEL))(<span class="keyword">void</span> *)objc_msgSend)</span><br><span class="line">        ((<span class="keyword">id</span>)objc_getClass(<span class="string">"NSObject"</span>), </span><br><span class="line">        sel_registerName(<span class="string">"alloc"</span>)),</span><br><span class="line">        sel_registerName(<span class="string">"init"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>删除一些强制转换的语句，可以看到调用方法本质就是发消息，<code>[[NSObject allock]init]</code>语句发送了两次消息，第一次发了alloc消息，第二次发送init消息。  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> obj = objc_msgSend(objc_getClass(<span class="string">"NSObject"</span>),sel_registerName(<span class="string">"alloc"</span>))</span><br><span class="line">objc_msgSend(obj,sel_registerName(<span class="string">"init"</span>))</span><br></pre></td></tr></table></figure>
+<p>另外利用runtime可以做一些OC不容易实现的功能</p>
+<ul>
+<li>动态交换两个方法的实现(特别是交换系统自带的方法)</li>
+<li>动态添加对象的成员变量和成员方法</li>
+<li>获得某个类的所有成员方法、所有成员变量</li>
+</ul>
+<h2 id="如何应用运行时？"><a href="#如何应用运行时？" class="headerlink" title="如何应用运行时？"></a>如何应用运行时？</h2><ol>
+<li>将某些OC代码转化为运行时代码，探究底层，比如block的实现原理；</li>
+<li>拦截系统自带的方法调用(Swizzle 黑魔法),比如拦截imageNamed、viewDidload、alloc；</li>
+<li>实现分类添加属性；</li>
+<li>实现NSCoding的自动归档和自动解档；</li>
+<li>实现字典和模型的自动转换；</li>
+</ol>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><h3 id="一、交换两个方法的实现，拦截系统自带方法的调用"><a href="#一、交换两个方法的实现，拦截系统自带方法的调用" class="headerlink" title="一、交换两个方法的实现，拦截系统自带方法的调用"></a>一、交换两个方法的实现，拦截系统自带方法的调用</h3><blockquote>
+<p>需要用到的库 <code>&lt;objc/runtime.h&gt;</code></p>
+</blockquote>
+<ul>
+<li>获得某个类的类方法<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Method class_getClassMethod(Class cls , SEL name)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>获得某个类的实例对象方法<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Method class_getInstanceMethod(Class cls , SEL name)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>交换两个方法的实现<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> method_exchangeImplementations(Method m1 , Method m2)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="案例1-方法简单的交换"><a href="#案例1-方法简单的交换" class="headerlink" title="案例1:方法简单的交换"></a>案例1:方法简单的交换</h4><p>创建一个Person类，类中实现以下两个类方法，并在<code>.h</code>文件中声明</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">void</span>)run &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"跑"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)study &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"学习"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[Person run];</span><br><span class="line">[Person study];</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">16</span>:<span class="number">10</span>:<span class="number">08.747473</span>+<span class="number">0800</span> runtime[<span class="number">1216</span>:<span class="number">568709</span>] 跑</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">16</span>:<span class="number">10</span>:<span class="number">08.747623</span>+<span class="number">0800</span> runtime[<span class="number">1216</span>:<span class="number">568709</span>] 学习</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>下面通过runtime实现方法的交换，类方法<code>class_getClassMethod</code>对象方法用<code>class_getInstanceMethod</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取两个类的类方法</span></span><br><span class="line">Method m1 = class_getClassMethod([Person <span class="keyword">class</span>], <span class="keyword">@selector</span>(run));</span><br><span class="line">Method m2 = class_getClassMethod([Person <span class="keyword">class</span>], <span class="keyword">@selector</span>(study));</span><br><span class="line"><span class="comment">// 开始交换方法实现</span></span><br><span class="line">method_exchangeImplementations(m1, m2);</span><br><span class="line"><span class="comment">// 交换后，先打印学习，再打印跑！</span></span><br><span class="line">[Person run];</span><br><span class="line">[Person study];</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">16</span>:<span class="number">10</span>:<span class="number">08.747473</span>+<span class="number">0800</span> runtime[<span class="number">1216</span>:<span class="number">568709</span>] 学习</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">16</span>:<span class="number">10</span>:<span class="number">08.747623</span>+<span class="number">0800</span> runtime[<span class="number">1216</span>:<span class="number">568709</span>] 跑</span><br></pre></td></tr></table></figure>
+<h4 id="案例2-拦截系统方法"><a href="#案例2-拦截系统方法" class="headerlink" title="案例2:拦截系统方法"></a>案例2:拦截系统方法</h4><blockquote>
+<p>需求：所有对象创建时进行打印，如何不自定义初始化方法实现打印呢？</p>
+</blockquote>
+<p>步骤：</p>
+<p>1、 为NSObject创建一个分类(NSObject+Category)<br>2、 在分类中实现一个自定义方法，方法中打印对象创建的语句</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">instancetype</span>)hk_init &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"创建一个类%@"</span>,[<span class="keyword">self</span> description]);</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> zh_init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 
+<p>3、分类中重写NSObjct的load方法，实现方法的交换  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取类的实例方法</span></span><br><span class="line">Method m1 = class_getInstanceMethod([<span class="built_in">NSObject</span> <span class="keyword">class</span>], <span class="keyword">@selector</span>(init));</span><br><span class="line">Method m2 = class_getInstanceMethod([<span class="built_in">NSObject</span> <span class="keyword">class</span>], <span class="keyword">@selector</span>(zh_init));</span><br><span class="line"><span class="comment">//交换方法的实现</span></span><br><span class="line">method_exchangeImplementations(m1, m2);</span><br></pre></td></tr></table></figure>
+<p>运行  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> Person *p = [[Person alloc] init];</span><br><span class="line">        </span><br><span class="line"> <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, p);</span><br><span class="line"> <span class="comment">//</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">16</span>:<span class="number">54</span>:<span class="number">17.028029</span>+<span class="number">0800</span> runtime[<span class="number">1408</span>:<span class="number">711381</span>] 创建一个类&lt;Person: <span class="number">0x1007007d0</span>&gt;</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">16</span>:<span class="number">54</span>:<span class="number">17.028069</span>+<span class="number">0800</span> runtime[<span class="number">1408</span>:<span class="number">711381</span>] &lt;Person: <span class="number">0x1007007d0</span>&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="二、在分类中设置属性，给任何一个对象设置属性"><a href="#二、在分类中设置属性，给任何一个对象设置属性" class="headerlink" title="二、在分类中设置属性，给任何一个对象设置属性"></a>二、在分类中设置属性，给任何一个对象设置属性</h3><p>众所周知，分类中是无法添加属性的。但是如果确实有这个需求就需要用到runtime为分类添加属性</p>
+<blockquote>
+<p>需要用到的库<code>&lt;objc/runtime.h&gt;</code></p>
+</blockquote>
+<ul>
+<li>set方法</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> 将值value 跟对象object 关联起来（将值value 存储到对象object 中）</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> @param object 给哪个对象设置属性</span></span><br><span class="line"><span class="comment"> @param key 一个属性对应一个Key，将来可以通过key取出这个存储的值，</span></span><br><span class="line"><span class="comment">            key 可以是任何类型：double、int 等，建议用char 可以节省字节</span></span><br><span class="line"><span class="comment"> @param value 给属性设置的值</span></span><br><span class="line"><span class="comment"> @param policy 存储策略 （assign 、copy 、 retain就是strong）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="keyword">void</span> objc_setAssociatedObject(<span class="keyword">id</span> object , <span class="keyword">const</span> <span class="keyword">void</span> *key ,<span class="keyword">id</span> value ,objc_AssociationPolicy policy)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>get方法</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> 利用参数key 将对象object中存储的对应值取出来</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> @param object 对哪个对象取值</span></span><br><span class="line"><span class="comment"> @param key 存储时绑定的key</span></span><br><span class="line"><span class="comment"> @return 存储的值</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">id</span> objc_getAssociatedObject(<span class="keyword">id</span> object , <span class="keyword">const</span> <span class="keyword">void</span> *key)</span><br></pre></td></tr></table></figure>
+<p>步骤：<br>1、创建一个分类，比如给任何一个对象都添加一个name属性，就是NSObject添加分类（NSObject+Category）<br>2、先在<code>.h</code>中<code>@property</code>声明get和set方法，方便点语法调用  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>)<span class="built_in">NSString</span> *name;</span><br></pre></td></tr></table></figure>
+<p>3、在<code>.m</code>中重写set和get方法，内部利用runtime给属性赋值和取值</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> nameKey;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setName:(<span class="built_in">NSString</span> *)name &#123;</span><br><span class="line">    <span class="comment">// 将某个值跟某个对象关联起来，将某个值存储到某个对象中</span></span><br><span class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, &amp;nameKey, name, OBJC_ASSOCIATION_COPY_NONATOMIC);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSString</span> *)name &#123;</span><br><span class="line">    <span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, &amp;nameKey);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Person *p = [[Person alloc] init];</span><br><span class="line">[p setName:<span class="string">@"Person"</span>];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, p.name);</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-11</span> <span class="number">17</span>:<span class="number">35</span>:<span class="number">39.727320</span>+<span class="number">0800</span> runtime[<span class="number">1487</span>:<span class="number">808106</span>] Person</span><br></pre></td></tr></table></figure>
+<h3 id="三、获得一个类的所有成员变量"><a href="#三、获得一个类的所有成员变量" class="headerlink" title="三、获得一个类的所有成员变量"></a>三、获得一个类的所有成员变量</h3><p>最典型的用法就是一个对象在归档和解档的<code>encodeWithCoder</code>和<code>initWithCoder:</code>方法中需要该对象所有的属性进行<code>decodeObjectForKey:</code>和<code>encodeObject:</code>，通过runtime我们声明中无论写多少个属性，都不需要再修改实现中的代码了。</p>
+<blockquote>
+<p>需要用到的库<code>&lt;objc/runtime.h&gt;</code></p>
+</blockquote>
+<ul>
+<li><p>获得某个类的所有成员变量(outCount会返回成员变量的总数)<br>参数</p>
+<ol>
+<li>cls：那个类</li>
+<li>outCount：放一个接收值的地址，用来存放属性的个数</li>
+<li>ivar：存放所有获取到的属性</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ivar *ivars = class_copyIvarList(Class cls , <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>获取成员变量的名字</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *ivar_getName(Ivar v)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>获得成员变量的类型</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *ivar_getTypeEndcoding(Ivar v)</span><br></pre></td></tr></table></figure>
+<h4 id="案例1：获取Person类中所有成员变量的名字和类型"><a href="#案例1：获取Person类中所有成员变量的名字和类型" class="headerlink" title="案例1：获取Person类中所有成员变量的名字和类型"></a>案例1：获取Person类中所有成员变量的名字和类型</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> outCount = <span class="number">0</span>;</span><br><span class="line">Ivar *ivars = class_copyIvarList([Person <span class="keyword">class</span>], &amp;outCount);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遍历所有成员变量</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; outCount; i++) &#123;</span><br><span class="line">    <span class="comment">// 取出i位置对应的成员变量</span></span><br><span class="line">    Ivar ivar = ivars[i];</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name = ivar_getName(ivar);</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type = ivar_getTypeEncoding(ivar);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"成员变量名：%s 成员变量类型：%s"</span>,name,type);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 注意释放内存！</span></span><br><span class="line">free(ivars);</span><br></pre></td></tr></table></figure>
+<h4 id="案例2-利用runtime获取所有属性来重写归档解档方法"><a href="#案例2-利用runtime获取所有属性来重写归档解档方法" class="headerlink" title="案例2:利用runtime获取所有属性来重写归档解档方法"></a>案例2:利用runtime获取所有属性来重写归档解档方法</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//归档</span></span><br><span class="line">- (<span class="keyword">void</span>)encodeWithCoder:(<span class="built_in">NSCoder</span> *)aCoder &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> outCount = <span class="number">0</span>;</span><br><span class="line">    Ivar *ivars = class_copyIvarList([Person <span class="keyword">class</span>], &amp;outCount);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; outCount; i++) &#123;</span><br><span class="line">        Ivar ivar = ivars[i];</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *name = ivar_getName(ivar);</span><br><span class="line">        <span class="built_in">NSString</span> *key = [<span class="built_in">NSString</span> stringWithUTF8String:name];</span><br><span class="line">        <span class="keyword">id</span> n = [<span class="keyword">self</span> valueForKey:key];</span><br><span class="line">        [aCoder encodeObject:n forKey:key];</span><br><span class="line">    &#125;</span><br><span class="line">    free(ivars);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//解档</span></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithCoder:(<span class="keyword">nonnull</span> <span class="built_in">NSCoder</span> *)aDecoder &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> outCount = <span class="number">0</span>;</span><br><span class="line">    Ivar *ivars = class_copyIvarList([Person <span class="keyword">class</span>], &amp;outCount);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; outCount; i++) &#123;</span><br><span class="line">        Ivar ivar = ivars[i];</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *name = ivar_getName(ivar);</span><br><span class="line">        <span class="built_in">NSString</span> *key = [<span class="built_in">NSString</span> stringWithUTF8String:name];</span><br><span class="line">        <span class="keyword">id</span> n = [aDecoder decodeObjectForKey:key];</span><br><span class="line">        [<span class="keyword">self</span> setValue:n forKey:key];</span><br><span class="line">    &#125;</span><br><span class="line">    free(ivars);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>同理用以上方法可以直接对NSObject做一个分类，让所有对象都具有归档能力</strong></p>
+<h4 id="案例3-利用runtime获取所有属性来进行字典转模型"><a href="#案例3-利用runtime获取所有属性来进行字典转模型" class="headerlink" title="案例3:利用runtime获取所有属性来进行字典转模型"></a>案例3:利用runtime获取所有属性来进行字典转模型</h4><blockquote>
+<p>字典转模型我们需要考虑三种特殊情况：<br>1.当字典的key和模型的属性匹配不上<br>2.模型中嵌套模型<br>3.数组包含模型  </p>
+</blockquote>
+<p>举例说明:  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="string">"name"</span>:<span class="string">"Father"</span>,</span><br><span class="line">		<span class="string">"age"</span>:<span class="number">12</span>,</span><br><span class="line">		<span class="string">"money"</span>:<span class="number">1000</span>, <span class="comment">//多余的属性</span></span><br><span class="line">		<span class="string">"dog"</span> : &#123;           <span class="comment">//模型嵌套模型</span></span><br><span class="line">			<span class="string">"name"</span>:<span class="string">"doge"</span>,</span><br><span class="line">			<span class="string">"age"</span>:<span class="number">12</span></span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="string">"books"</span>:[&#123;    <span class="comment">//数组模型</span></span><br><span class="line">			<span class="string">"name"</span>:<span class="string">"iOS developer"</span>,</span><br><span class="line">			<span class="string">"price"</span>:<span class="number">24.23</span></span><br><span class="line">		&#125;,&#123;</span><br><span class="line">			<span class="string">"name"</span>:<span class="string">"runtime"</span>,</span><br><span class="line">			<span class="string">"price"</span>:<span class="number">34.5</span></span><br><span class="line">		&#125;]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>NSObject+JSONExtention.h<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回数组中都是什么类型的模型对象</span></span><br><span class="line">- (<span class="built_in">NSString</span> *)arrayObjectClass ;</span><br></pre></td></tr></table></figure><br><strong>此方法需对应的模型实现，返回数组模型的类名</strong></p>
+<p>NSObject+JSONExtention.m</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>)setDic:(<span class="built_in">NSDictionary</span> *)dic  &#123;</span><br><span class="line">    </span><br><span class="line">    Class c = <span class="keyword">self</span>.class;</span><br><span class="line">    <span class="keyword">while</span> (c &amp;&amp;c != [<span class="built_in">NSObject</span> <span class="keyword">class</span>]) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> outCount = <span class="number">0</span>;</span><br><span class="line">        Ivar *ivars = class_copyIvarList(c, &amp;outCount);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; outCount; i++) &#123;</span><br><span class="line">            Ivar ivar = ivars[i];</span><br><span class="line">            <span class="built_in">NSString</span> *key = [<span class="built_in">NSString</span> stringWithUTF8String:ivar_getName(ivar)];</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> ([key hasPrefix:<span class="string">@"_"</span>]) &#123;</span><br><span class="line">            <span class="comment">// 成员变量名转为属性名（去掉下划线 _ ）</span></span><br><span class="line">                key = [key substringFromIndex:<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 取出字典的值</span></span><br><span class="line">            <span class="keyword">id</span> value = dic[key];</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 如果模型属性数量大于字典键值对数理，模型属性会被赋值为nil而报错</span></span><br><span class="line">            <span class="keyword">if</span> (value == <span class="literal">nil</span>) <span class="keyword">continue</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 获得成员变量的类型</span></span><br><span class="line">            <span class="built_in">NSString</span> *type = [<span class="built_in">NSString</span> stringWithUTF8String:ivar_getTypeEncoding(ivar)];</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 如果属性是对象类型</span></span><br><span class="line">            <span class="built_in">NSRange</span> range = [type rangeOfString:<span class="string">@"@"</span>];</span><br><span class="line">            <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">                <span class="comment">// 那么截取对象的名字（比如@"Dog"，截取为Dog）</span></span><br><span class="line">                type = [type substringWithRange:<span class="built_in">NSMakeRange</span>(<span class="number">2</span>, type.length - <span class="number">3</span>)];</span><br><span class="line">                <span class="comment">// 排除系统的对象类型</span></span><br><span class="line">                <span class="keyword">if</span> (![type hasPrefix:<span class="string">@"NS"</span>]) &#123;</span><br><span class="line">                    <span class="comment">// 将对象名转换为对象的类型，将新的对象字典转模型（递归）</span></span><br><span class="line">                    Class <span class="keyword">class</span> = <span class="built_in">NSClassFromString</span>(type);</span><br><span class="line">                    value = [<span class="keyword">class</span> objectWithDict:value];</span><br><span class="line">                    </span><br><span class="line">                &#125;<span class="keyword">else</span> <span class="keyword">if</span> ([type isEqualToString:<span class="string">@"NSArray"</span>]) &#123;</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment">// 如果是数组类型，将数组中的每个模型进行字典转模型，先创建一个临时数组存放模型</span></span><br><span class="line">                    <span class="built_in">NSArray</span> *array = (<span class="built_in">NSArray</span> *)value;</span><br><span class="line">                    <span class="built_in">NSMutableArray</span> *mArray = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment">// 获取到每个模型的类型</span></span><br><span class="line">                    <span class="keyword">id</span> <span class="keyword">class</span> ;</span><br><span class="line">                    <span class="keyword">if</span> ([<span class="keyword">self</span> respondsToSelector:<span class="keyword">@selector</span>(arrayObjectClass)]) &#123;</span><br><span class="line">                        </span><br><span class="line">                        <span class="built_in">NSString</span> *classStr = [<span class="keyword">self</span> arrayObjectClass];</span><br><span class="line">                        <span class="keyword">class</span> = <span class="built_in">NSClassFromString</span>(classStr);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 将数组中的所有模型进行字典转模型</span></span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; array.count; i++) &#123;</span><br><span class="line">                        [mArray addObject:[<span class="keyword">class</span> objectWithDict:value[i]]];</span><br><span class="line">                    &#125;</span><br><span class="line">                    </span><br><span class="line">                    value = mArray;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 将字典中的值设置到模型上</span></span><br><span class="line">            [<span class="keyword">self</span> setValue:value forKeyPath:key];</span><br><span class="line">        &#125;</span><br><span class="line">        free(ivars);</span><br><span class="line">        c = [c superclass];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">instancetype</span> )objectWithDict:(<span class="built_in">NSDictionary</span> *)dict &#123;</span><br><span class="line">    <span class="built_in">NSObject</span> *obj = [[<span class="keyword">self</span> alloc]init];</span><br><span class="line">    [obj setDic:dict];</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong><a href="https://github.com/HankMax/runtimeDemo" target="_blank" rel="noopener">Demo地址</a></strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/05/first/" rel="next" title="我的第一篇博客">
+                <i class="fa fa-chevron-left"></i> 我的第一篇博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjE2Ny84NzMx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/head.png"
+                alt="Hank Zhang" />
+            
+              <p class="site-author-name" itemprop="name">Hank Zhang</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap Show me the code</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Runtime"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x4EC0;&#x4E48;&#x662F;Runtime" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;Runtime"></a>&#x4EC0;&#x4E48;&#x662F;Runtime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何应用运行时？"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x5982;&#x4F55;&#x5E94;&#x7528;&#x8FD0;&#x884C;&#x65F6;&#xFF1F;" class="headerlink" title="&#x5982;&#x4F55;&#x5E94;&#x7528;&#x8FD0;&#x884C;&#x65F6;&#xFF1F;"></a>&#x5982;&#x4F55;&#x5E94;&#x7528;&#x8FD0;&#x884C;&#x65F6;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x5B9E;&#x4F8B;" class="headerlink" title="&#x5B9E;&#x4F8B;"></a>&#x5B9E;&#x4F8B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、交换两个方法的实现，拦截系统自带方法的调用"><span class="nav-number">3.1.</span> <span class="nav-text"><a href="#&#x4E00;&#x3001;&#x4EA4;&#x6362;&#x4E24;&#x4E2A;&#x65B9;&#x6CD5;&#x7684;&#x5B9E;&#x73B0;&#xFF0C;&#x62E6;&#x622A;&#x7CFB;&#x7EDF;&#x81EA;&#x5E26;&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;" class="headerlink" title="&#x4E00;&#x3001;&#x4EA4;&#x6362;&#x4E24;&#x4E2A;&#x65B9;&#x6CD5;&#x7684;&#x5B9E;&#x73B0;&#xFF0C;&#x62E6;&#x622A;&#x7CFB;&#x7EDF;&#x81EA;&#x5E26;&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;"></a>&#x4E00;&#x3001;&#x4EA4;&#x6362;&#x4E24;&#x4E2A;&#x65B9;&#x6CD5;&#x7684;&#x5B9E;&#x73B0;&#xFF0C;&#x62E6;&#x622A;&#x7CFB;&#x7EDF;&#x81EA;&#x5E26;&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#案例1-方法简单的交换"><span class="nav-number">3.1.1.</span> <span class="nav-text"><a href="#&#x6848;&#x4F8B;1-&#x65B9;&#x6CD5;&#x7B80;&#x5355;&#x7684;&#x4EA4;&#x6362;" class="headerlink" title="&#x6848;&#x4F8B;1:&#x65B9;&#x6CD5;&#x7B80;&#x5355;&#x7684;&#x4EA4;&#x6362;"></a>&#x6848;&#x4F8B;1:&#x65B9;&#x6CD5;&#x7B80;&#x5355;&#x7684;&#x4EA4;&#x6362;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例2-拦截系统方法"><span class="nav-number">3.1.2.</span> <span class="nav-text"><a href="#&#x6848;&#x4F8B;2-&#x62E6;&#x622A;&#x7CFB;&#x7EDF;&#x65B9;&#x6CD5;" class="headerlink" title="&#x6848;&#x4F8B;2:&#x62E6;&#x622A;&#x7CFB;&#x7EDF;&#x65B9;&#x6CD5;"></a>&#x6848;&#x4F8B;2:&#x62E6;&#x622A;&#x7CFB;&#x7EDF;&#x65B9;&#x6CD5;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、在分类中设置属性，给任何一个对象设置属性"><span class="nav-number">3.2.</span> <span class="nav-text"><a href="#&#x4E8C;&#x3001;&#x5728;&#x5206;&#x7C7B;&#x4E2D;&#x8BBE;&#x7F6E;&#x5C5E;&#x6027;&#xFF0C;&#x7ED9;&#x4EFB;&#x4F55;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;&#x8BBE;&#x7F6E;&#x5C5E;&#x6027;" class="headerlink" title="&#x4E8C;&#x3001;&#x5728;&#x5206;&#x7C7B;&#x4E2D;&#x8BBE;&#x7F6E;&#x5C5E;&#x6027;&#xFF0C;&#x7ED9;&#x4EFB;&#x4F55;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;&#x8BBE;&#x7F6E;&#x5C5E;&#x6027;"></a>&#x4E8C;&#x3001;&#x5728;&#x5206;&#x7C7B;&#x4E2D;&#x8BBE;&#x7F6E;&#x5C5E;&#x6027;&#xFF0C;&#x7ED9;&#x4EFB;&#x4F55;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;&#x8BBE;&#x7F6E;&#x5C5E;&#x6027;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、获得一个类的所有成员变量"><span class="nav-number">3.3.</span> <span class="nav-text"><a href="#&#x4E09;&#x3001;&#x83B7;&#x5F97;&#x4E00;&#x4E2A;&#x7C7B;&#x7684;&#x6240;&#x6709;&#x6210;&#x5458;&#x53D8;&#x91CF;" class="headerlink" title="&#x4E09;&#x3001;&#x83B7;&#x5F97;&#x4E00;&#x4E2A;&#x7C7B;&#x7684;&#x6240;&#x6709;&#x6210;&#x5458;&#x53D8;&#x91CF;"></a>&#x4E09;&#x3001;&#x83B7;&#x5F97;&#x4E00;&#x4E2A;&#x7C7B;&#x7684;&#x6240;&#x6709;&#x6210;&#x5458;&#x53D8;&#x91CF;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#案例1：获取Person类中所有成员变量的名字和类型"><span class="nav-number">3.3.1.</span> <span class="nav-text"><a href="#&#x6848;&#x4F8B;1&#xFF1A;&#x83B7;&#x53D6;Person&#x7C7B;&#x4E2D;&#x6240;&#x6709;&#x6210;&#x5458;&#x53D8;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x548C;&#x7C7B;&#x578B;" class="headerlink" title="&#x6848;&#x4F8B;1&#xFF1A;&#x83B7;&#x53D6;Person&#x7C7B;&#x4E2D;&#x6240;&#x6709;&#x6210;&#x5458;&#x53D8;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x548C;&#x7C7B;&#x578B;"></a>&#x6848;&#x4F8B;1&#xFF1A;&#x83B7;&#x53D6;Person&#x7C7B;&#x4E2D;&#x6240;&#x6709;&#x6210;&#x5458;&#x53D8;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x548C;&#x7C7B;&#x578B;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例2-利用runtime获取所有属性来重写归档解档方法"><span class="nav-number">3.3.2.</span> <span class="nav-text"><a href="#&#x6848;&#x4F8B;2-&#x5229;&#x7528;runtime&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5C5E;&#x6027;&#x6765;&#x91CD;&#x5199;&#x5F52;&#x6863;&#x89E3;&#x6863;&#x65B9;&#x6CD5;" class="headerlink" title="&#x6848;&#x4F8B;2:&#x5229;&#x7528;runtime&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5C5E;&#x6027;&#x6765;&#x91CD;&#x5199;&#x5F52;&#x6863;&#x89E3;&#x6863;&#x65B9;&#x6CD5;"></a>&#x6848;&#x4F8B;2:&#x5229;&#x7528;runtime&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5C5E;&#x6027;&#x6765;&#x91CD;&#x5199;&#x5F52;&#x6863;&#x89E3;&#x6863;&#x65B9;&#x6CD5;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例3-利用runtime获取所有属性来进行字典转模型"><span class="nav-number">3.3.3.</span> <span class="nav-text"><a href="#&#x6848;&#x4F8B;3-&#x5229;&#x7528;runtime&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5C5E;&#x6027;&#x6765;&#x8FDB;&#x884C;&#x5B57;&#x5178;&#x8F6C;&#x6A21;&#x578B;" class="headerlink" title="&#x6848;&#x4F8B;3:&#x5229;&#x7528;runtime&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5C5E;&#x6027;&#x6765;&#x8FDB;&#x884C;&#x5B57;&#x5178;&#x8F6C;&#x6A21;&#x578B;"></a>&#x6848;&#x4F8B;3:&#x5229;&#x7528;runtime&#x83B7;&#x53D6;&#x6240;&#x6709;&#x5C5E;&#x6027;&#x6765;&#x8FDB;&#x884C;&#x5B57;&#x5178;&#x8F6C;&#x6A21;&#x578B;</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hank Zhang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
