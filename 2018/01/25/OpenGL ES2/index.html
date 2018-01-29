@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,OpenGL ES," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="使用OpenGL ES在iOS平台上画三角形演示在iOS平台上,使用OpenGL ES 3.0绘制一个三角形 流程 准备渲染环境:  编写Shader  准备数据:  开始绘制  释放内存">
+<meta name="keywords" content="iOS,OpenGL ES">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenGL ES入门(二) ——画个三角形">
+<meta property="og:url" content="http://yoursite.com/2018/01/25/OpenGL ES2/index.html">
+<meta property="og:site_name" content="Hank&#39;s Zone">
+<meta property="og:description" content="使用OpenGL ES在iOS平台上画三角形演示在iOS平台上,使用OpenGL ES 3.0绘制一个三角形 流程 准备渲染环境:  编写Shader  准备数据:  开始绘制  释放内存">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/uploads/location.png">
+<meta property="og:updated_time" content="2018-01-29T06:17:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenGL ES入门(二) ——画个三角形">
+<meta name="twitter:description" content="使用OpenGL ES在iOS平台上画三角形演示在iOS平台上,使用OpenGL ES 3.0绘制一个三角形 流程 准备渲染环境:  编写Shader  准备数据:  开始绘制  释放内存">
+<meta name="twitter:image" content="http://yoursite.com/uploads/location.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/25/OpenGL ES2/"/>
+
+
+
+
+
+  <title>OpenGL ES入门(二) ——画个三角形 | Hank's Zone</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e6c0060626c68c424035bbec7e39d5cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hank's Zone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Hank writing in here</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/25/OpenGL ES2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hank Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/head.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hank's Zone">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenGL ES入门(二) ——画个三角形</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-25T11:40:00+08:00">
+                2018-01-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习/" itemprop="url" rel="index">
+                    <span itemprop="name">学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="使用OpenGL-ES在iOS平台上画三角形"><a href="#使用OpenGL-ES在iOS平台上画三角形" class="headerlink" title="使用OpenGL ES在iOS平台上画三角形"></a>使用OpenGL ES在iOS平台上画三角形</h2><p>演示在iOS平台上,使用OpenGL ES 3.0绘制一个三角形</p>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><ol>
+<li><p><strong>准备渲染环境</strong>:</p>
+</li>
+<li><p><strong>编写Shader</strong></p>
+</li>
+<li><p><strong>准备数据</strong>:</p>
+</li>
+<li><p><strong>开始绘制</strong></p>
+</li>
+<li><p><strong>释放内存</strong></p>
+</li>
+</ol>
+<a id="more"></a>
+<h3 id="一、准备渲染环境"><a href="#一、准备渲染环境" class="headerlink" title="一、准备渲染环境"></a>一、准备渲染环境</h3><h4 id="1-引入OpenGL-ES框架"><a href="#1-引入OpenGL-ES框架" class="headerlink" title="1.引入OpenGL ES框架"></a>1.引入OpenGL ES框架</h4><blockquote>
+<p><code>#import &lt;OpenGLES/ES3/gl.h&gt;</code></p>
+</blockquote>
+<h4 id="2-准备绘图的Layer"><a href="#2-准备绘图的Layer" class="headerlink" title="2.准备绘图的Layer"></a>2.准备绘图的Layer</h4><p>新建一个视图类所有的绘制都在内部完成,指定它的Layer为CAEAGLLayer,只有此类型的Layer才支持OpenGL ES的绘制<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (Class)layerClass &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">CAEAGLLayer</span> <span class="keyword">class</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>配置Layer属性<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CAEAGLLayer</span> *glLayer = (<span class="built_in">CAEAGLLayer</span> *)<span class="keyword">self</span>.layer;</span><br><span class="line"><span class="built_in">NSDictionary</span> *drawableProperties = @&#123;</span><br><span class="line">                                     kEAGLDrawablePropertyRetainedBacking: @(<span class="literal">NO</span>),</span><br><span class="line">                                     kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8</span><br><span class="line">                                     &#125;;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * kEAGLDrawablePropertyRetainedBacking:不维持渲染内容</span></span><br><span class="line"><span class="comment"> * kEAGLDrawablePropertyColorFormat:颜色缓冲格式 32-bit RGBA格式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">glLayer.drawableProperties = drawableProperties;</span><br><span class="line"></span><br><span class="line">glLayer.contentsScale = [<span class="built_in">UIScreen</span> mainScreen].scale;</span><br><span class="line"><span class="comment">//Layer默认是透明的 设置为不透明内容才可见</span></span><br><span class="line">glLayer.opaque = <span class="literal">YES</span>;</span><br></pre></td></tr></table></figure></p>
+<h4 id="3-准备绘制上下文环境"><a href="#3-准备绘制上下文环境" class="headerlink" title="3.准备绘制上下文环境"></a>3.准备绘制上下文环境</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setUpContext &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 指定 OpenGL 渲染 API 的版本，在这里我们使用 OpenGL ES 3.0</span></span><br><span class="line">    _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 设置为当前上下文</span></span><br><span class="line">    [EAGLContext setCurrentContext:_glContext];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-准备渲染缓存空间"><a href="#4-准备渲染缓存空间" class="headerlink" title="4.准备渲染缓存空间"></a>4.准备渲染缓存空间</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//申请颜色渲染缓存空间</span></span><br><span class="line">GLuint colorRenderBuffer;</span><br><span class="line">glGenBuffers(<span class="number">1</span>, &amp;colorRenderBuffer);</span><br><span class="line">glBindRenderbuffer(GL_RENDERBUFFER, colorRenderBuffer);</span><br><span class="line"><span class="keyword">self</span>.colorRenderBuffer = colorRenderBuffer;</span><br><span class="line"><span class="comment">// 为 color renderbuffer 分配存储空间</span></span><br><span class="line">[<span class="keyword">self</span>.glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(<span class="built_in">CAEAGLLayer</span> *)<span class="keyword">self</span>.layer];</span><br><span class="line"></span><br><span class="line"> <span class="comment">//申请帧渲染缓存空间</span></span><br><span class="line">GLuint frameBuffer;</span><br><span class="line">glGenFramebuffers(<span class="number">1</span>, &amp;frameBuffer);</span><br><span class="line">glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);</span><br><span class="line"><span class="keyword">self</span>.colorFrameBuffer = frameBuffer;</span><br><span class="line"><span class="comment">// 将 _colorRenderBuffer 装配到 GL_COLOR_ATTACHMENT0 这个装配点上</span></span><br><span class="line">glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderBuffer);</span><br></pre></td></tr></table></figure>
+<h3 id="二、编写Shader"><a href="#二、编写Shader" class="headerlink" title="二、编写Shader"></a>二、编写Shader</h3><h4 id="1-编写顶点着色器"><a href="#1-编写顶点着色器" class="headerlink" title="1.编写顶点着色器"></a>1.编写顶点着色器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">attribute vec3 a_Position; //顶点坐标属性</span><br><span class="line">attribute vec4 a_Color;    //顶点颜色属性</span><br><span class="line"></span><br><span class="line">varying highp vec4 v_Color; //传递颜色值到片元着色器接口</span><br><span class="line"></span><br><span class="line">void main(void) &#123;</span><br><span class="line">    v_Color = a_Color;</span><br><span class="line">    gl_Position = vec4(a_Position.x, a_Position.y, a_Position.z, 1.0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-编写片元着色器"><a href="#2-编写片元着色器" class="headerlink" title="2.编写片元着色器"></a>2.编写片元着色器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">varying highp vec4 v_Color; //接收传递过来的颜色值</span><br><span class="line"></span><br><span class="line">void main(void) &#123;</span><br><span class="line">    gl_FragColor = v_Color; //传递给输出变量</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-加载着色器"><a href="#3-加载着色器" class="headerlink" title="3.加载着色器"></a>3.加载着色器</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">- (GLuint)loadShaderCode:(<span class="built_in">NSString</span> *)fileName shaderType:(GLenum)type &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *filePath = [[<span class="built_in">NSBundle</span> mainBundle]pathForResource:fileName ofType:<span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSError</span> *error;</span><br><span class="line">    <span class="built_in">NSString</span> *content = [<span class="built_in">NSString</span> stringWithContentsOfFile:filePath encoding:<span class="built_in">NSUTF8StringEncoding</span> error:&amp;error];</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Load Shader Error:%@"</span>,error.localizedDescription);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> GLchar *stringDatas = [content UTF8String];</span><br><span class="line">    GLint stringLength = (GLint)content.length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//创建ShaderId</span></span><br><span class="line">    GLuint shaderID = glCreateShader(type);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//加载Shader 数据</span></span><br><span class="line">    glShaderSource(shaderID, <span class="number">1</span>, &amp;stringDatas, &amp;stringLength);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> shaderID;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-编译着色器"><a href="#4-编译着色器" class="headerlink" title="4.编译着色器"></a>4.编译着色器</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)compilingShaderWithShaderIdentifier:(GLuint)shaderId &#123;</span><br><span class="line">    <span class="comment">//编译 Shader</span></span><br><span class="line">    glCompileShader(shaderId);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//获取编译信息</span></span><br><span class="line">    GLint compileSuccess;</span><br><span class="line">    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &amp;compileSuccess);</span><br><span class="line">    <span class="keyword">if</span> (compileSuccess == GL_FALSE) &#123;</span><br><span class="line">        GLint infoLength;</span><br><span class="line">        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &amp;infoLength);</span><br><span class="line">        GLchar *messages = malloc(<span class="keyword">sizeof</span>(GLchar *) * infoLength);</span><br><span class="line">        glGetShaderInfoLog(shaderId, infoLength, <span class="literal">NULL</span>, messages);</span><br><span class="line">        <span class="built_in">NSString</span> *messageString = [<span class="built_in">NSString</span> stringWithUTF8String:messages];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: Copiled Fail:%@"</span>,messageString);</span><br><span class="line">        free(messages);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="5-链接着色器"><a href="#5-链接着色器" class="headerlink" title="5.链接着色器"></a>5.链接着色器</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)createProgram:(GLuint)vertexShader fragmentShader:(GLuint)fragmentShader &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//创建程序</span></span><br><span class="line">    GLuint program = glCreateProgram();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//附加着色器</span></span><br><span class="line">    glAttachShader(program, vertexShader);</span><br><span class="line">    glAttachShader(program, fragmentShader);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//绑定属性所在的位置</span></span><br><span class="line">    <span class="keyword">const</span> GLuint positionAttributeIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> GLuint colorAttributeIndex    = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> GLchar *positionAttributeName = <span class="string">"a_Position"</span>;</span><br><span class="line">    <span class="keyword">const</span> GLchar *colorAttributeName    = <span class="string">"a_Color"</span>;</span><br><span class="line">    </span><br><span class="line">    glBindAttribLocation(program, positionAttributeIndex, positionAttributeName);</span><br><span class="line">    glBindAttribLocation(program, colorAttributeIndex, colorAttributeName);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//链接程序</span></span><br><span class="line">    glLinkProgram(program);</span><br><span class="line">    </span><br><span class="line">    GLint linkSuccess;</span><br><span class="line">    glGetProgramiv(program, GL_LINK_STATUS, &amp;linkSuccess);</span><br><span class="line">    <span class="keyword">if</span> (linkSuccess == GL_FALSE) &#123; <span class="comment">//链接失败</span></span><br><span class="line">        GLint infoLength;</span><br><span class="line">        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &amp;infoLength);</span><br><span class="line">        GLchar *messages = malloc(<span class="keyword">sizeof</span>(GLchar *) * infoLength);</span><br><span class="line">        glGetProgramInfoLog(program, infoLength, <span class="literal">NULL</span>, messages);</span><br><span class="line">        <span class="built_in">NSString</span> *messageString = [<span class="built_in">NSString</span> stringWithUTF8String:messages];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: Program Link Fail:%@"</span>,messageString);</span><br><span class="line">        free(messages);</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//使用当前程序</span></span><br><span class="line">    glUseProgram(program);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//释放Shader 内存</span></span><br><span class="line">    glDeleteShader(vertexShader);</span><br><span class="line">    glDeleteShader(fragmentShader);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.program = program;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三、准备数据"><a href="#三、准备数据" class="headerlink" title="三、准备数据"></a>三、准备数据</h3><h4 id="1-坐标"><a href="#1-坐标" class="headerlink" title="1.坐标"></a>1.坐标</h4><p>OpenGL ES坐标系:<br><img src="/uploads/location.png" alt=""></p>
+<p>OpenGL ES坐标系是一个三维坐标系{x,y,z},三维坐标中心在正方体的几何中心{0,0,0}</p>
+<p>整个坐标系是[0,1]的点,也就是说OpenGL中只支持0~1的点</p>
+<h4 id="2-生成顶点数据"><a href="#2-生成顶点数据" class="headerlink" title="2.生成顶点数据"></a>2.生成顶点数据</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GLfloat vertexs[] = &#123;</span><br><span class="line">     //顶点坐标            //顶点颜色</span><br><span class="line">     -0.5, -0.5, 0.0,    1.0,0.0,0.0,1.0,</span><br><span class="line">      0.0,  0.5, 0.0,    1.0,0.0,0.0,1.0,</span><br><span class="line">      0.5, -0.5, 0.0,    1.0,0.0,0.0,1.0,</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+<p>上面数据定义了三个顶点数据,每个顶点数据包含坐标和顶点颜色.</p>
+<h4 id="3-生成顶点缓存对象"><a href="#3-生成顶点缓存对象" class="headerlink" title="3.生成顶点缓存对象"></a>3.生成顶点缓存对象</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//生成一个顶点缓存对象</span></span><br><span class="line">  GLuint VBO;</span><br><span class="line">  glGenBuffers(<span class="number">1</span>, &amp;VBO);</span><br><span class="line">  <span class="comment">//绑定到GL_ARRAY_BUFFER缓冲类型上</span></span><br><span class="line">  glBindBuffer(GL_ARRAY_BUFFER, VBO);</span><br><span class="line">  <span class="comment">//将顶点数据复制到缓存内存中</span></span><br><span class="line">  glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vertexs), vertexs, GL_STATIC_DRAW);</span><br></pre></td></tr></table></figure>
+<h4 id="4-定义顶点解析配置"><a href="#4-定义顶点解析配置" class="headerlink" title="4.定义顶点解析配置"></a>4.定义顶点解析配置</h4> <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> GLuint positionAttributeIndex = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">const</span> GLuint colorAttributeIndex    = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> GLint positionCount = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">const</span> GLint colorCount    = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义顶点的解析配置</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> positionAttributeIndex:属性开始位置</span></span><br><span class="line"><span class="comment"> positionCount:属性数据长度</span></span><br><span class="line"><span class="comment"> GL_FLOAT : 属性值的类型</span></span><br><span class="line"><span class="comment"> GL_FALSE : 数据不被标准化 //标准化:将所有数据映射到0-1之间</span></span><br><span class="line"><span class="comment"> sizeof(GLfloat) * 7: 步长,每个顶点属性组的长度</span></span><br><span class="line"><span class="comment"> (void *)0 : 偏移量 每个顶点从属性组第几个位置取值</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">//配置顶点位置属性</span></span><br><span class="line">glVertexAttribPointer(positionAttributeIndex, positionCount, GL_FLOAT, GL_FALSE, <span class="keyword">sizeof</span>(GLfloat) * <span class="number">7</span>, (<span class="keyword">void</span> *)<span class="number">0</span>);</span><br><span class="line"><span class="comment">//使属性配置生效</span></span><br><span class="line">glEnableVertexAttribArray(positionAttributeIndex);</span><br><span class="line"></span><br><span class="line"><span class="comment">//配置顶点颜色属性</span></span><br><span class="line">glVertexAttribPointer(colorAttributeIndex, colorCount, GL_FLOAT, GL_FALSE, <span class="keyword">sizeof</span>(GLfloat) * <span class="number">7</span>, (<span class="keyword">void</span> *)(<span class="number">3</span> * <span class="keyword">sizeof</span>(GLfloat)));</span><br><span class="line">glEnableVertexAttribArray(colorAttributeIndex);    </span><br></pre></td></tr></table></figure>
+<h3 id="四、开始绘制"><a href="#四、开始绘制" class="headerlink" title="四、开始绘制"></a>四、开始绘制</h3><h4 id="1-开始绘制"><a href="#1-开始绘制" class="headerlink" title="1.开始绘制"></a>1.开始绘制</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//开始绘制</span><br><span class="line">   /**</span><br><span class="line">    GL_TRIANGLES:绘制三角形</span><br><span class="line">    0 :起点从第0个位置开始</span><br><span class="line">    3 :绘制3个顶点</span><br><span class="line">    */</span><br><span class="line">   glDrawArrays(GL_LINES, 0, 3);</span><br></pre></td></tr></table></figure>
+<h4 id="2-将绘制内容展现到屏幕上"><a href="#2-将绘制内容展现到屏幕上" class="headerlink" title="2.将绘制内容展现到屏幕上"></a>2.将绘制内容展现到屏幕上</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//将渲染缓存区的内容显示到屏幕上</span><br><span class="line">[self.glContext presentRenderbuffer:GL_RENDERBUFFER];</span><br></pre></td></tr></table></figure>
+<h3 id="五、释放内存"><a href="#五、释放内存" class="headerlink" title="五、释放内存"></a>五、释放内存</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//渲染完成释放内存</span><br><span class="line">glDisableVertexAttribArray(positionAttributeIndex);</span><br><span class="line">glDisableVertexAttribArray(colorAttributeIndex);</span><br><span class="line">glDeleteBuffers(1, &amp;VBO);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/OpenGL-ES/" rel="tag"># OpenGL ES</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/24/OpenGL ES1/" rel="next" title="OpenGL ES入门(一) —— 概念讲解">
+                <i class="fa fa-chevron-left"></i> OpenGL ES入门(一) —— 概念讲解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjE2Ny84NzMx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/head.png"
+                alt="Hank Zhang" />
+            
+              <p class="site-author-name" itemprop="name">Hank Zhang</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap Show me the code</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用OpenGL-ES在iOS平台上画三角形"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x4F7F;&#x7528;OpenGL-ES&#x5728;iOS&#x5E73;&#x53F0;&#x4E0A;&#x753B;&#x4E09;&#x89D2;&#x5F62;" class="headerlink" title="&#x4F7F;&#x7528;OpenGL ES&#x5728;iOS&#x5E73;&#x53F0;&#x4E0A;&#x753B;&#x4E09;&#x89D2;&#x5F62;"></a>&#x4F7F;&#x7528;OpenGL ES&#x5728;iOS&#x5E73;&#x53F0;&#x4E0A;&#x753B;&#x4E09;&#x89D2;&#x5F62;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#流程"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#&#x6D41;&#x7A0B;" class="headerlink" title="&#x6D41;&#x7A0B;"></a>&#x6D41;&#x7A0B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一、准备渲染环境"><span class="nav-number">1.2.</span> <span class="nav-text"><a href="#&#x4E00;&#x3001;&#x51C6;&#x5907;&#x6E32;&#x67D3;&#x73AF;&#x5883;" class="headerlink" title="&#x4E00;&#x3001;&#x51C6;&#x5907;&#x6E32;&#x67D3;&#x73AF;&#x5883;"></a>&#x4E00;&#x3001;&#x51C6;&#x5907;&#x6E32;&#x67D3;&#x73AF;&#x5883;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-引入OpenGL-ES框架"><span class="nav-number">1.2.1.</span> <span class="nav-text"><a href="#1-&#x5F15;&#x5165;OpenGL-ES&#x6846;&#x67B6;" class="headerlink" title="1.&#x5F15;&#x5165;OpenGL ES&#x6846;&#x67B6;"></a>1.&#x5F15;&#x5165;OpenGL ES&#x6846;&#x67B6;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-准备绘图的Layer"><span class="nav-number">1.2.2.</span> <span class="nav-text"><a href="#2-&#x51C6;&#x5907;&#x7ED8;&#x56FE;&#x7684;Layer" class="headerlink" title="2.&#x51C6;&#x5907;&#x7ED8;&#x56FE;&#x7684;Layer"></a>2.&#x51C6;&#x5907;&#x7ED8;&#x56FE;&#x7684;Layer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-准备绘制上下文环境"><span class="nav-number">1.2.3.</span> <span class="nav-text"><a href="#3-&#x51C6;&#x5907;&#x7ED8;&#x5236;&#x4E0A;&#x4E0B;&#x6587;&#x73AF;&#x5883;" class="headerlink" title="3.&#x51C6;&#x5907;&#x7ED8;&#x5236;&#x4E0A;&#x4E0B;&#x6587;&#x73AF;&#x5883;"></a>3.&#x51C6;&#x5907;&#x7ED8;&#x5236;&#x4E0A;&#x4E0B;&#x6587;&#x73AF;&#x5883;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-准备渲染缓存空间"><span class="nav-number">1.2.4.</span> <span class="nav-text"><a href="#4-&#x51C6;&#x5907;&#x6E32;&#x67D3;&#x7F13;&#x5B58;&#x7A7A;&#x95F4;" class="headerlink" title="4.&#x51C6;&#x5907;&#x6E32;&#x67D3;&#x7F13;&#x5B58;&#x7A7A;&#x95F4;"></a>4.&#x51C6;&#x5907;&#x6E32;&#x67D3;&#x7F13;&#x5B58;&#x7A7A;&#x95F4;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、编写Shader"><span class="nav-number">1.3.</span> <span class="nav-text"><a href="#&#x4E8C;&#x3001;&#x7F16;&#x5199;Shader" class="headerlink" title="&#x4E8C;&#x3001;&#x7F16;&#x5199;Shader"></a>&#x4E8C;&#x3001;&#x7F16;&#x5199;Shader</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-编写顶点着色器"><span class="nav-number">1.3.1.</span> <span class="nav-text"><a href="#1-&#x7F16;&#x5199;&#x9876;&#x70B9;&#x7740;&#x8272;&#x5668;" class="headerlink" title="1.&#x7F16;&#x5199;&#x9876;&#x70B9;&#x7740;&#x8272;&#x5668;"></a>1.&#x7F16;&#x5199;&#x9876;&#x70B9;&#x7740;&#x8272;&#x5668;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-编写片元着色器"><span class="nav-number">1.3.2.</span> <span class="nav-text"><a href="#2-&#x7F16;&#x5199;&#x7247;&#x5143;&#x7740;&#x8272;&#x5668;" class="headerlink" title="2.&#x7F16;&#x5199;&#x7247;&#x5143;&#x7740;&#x8272;&#x5668;"></a>2.&#x7F16;&#x5199;&#x7247;&#x5143;&#x7740;&#x8272;&#x5668;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-加载着色器"><span class="nav-number">1.3.3.</span> <span class="nav-text"><a href="#3-&#x52A0;&#x8F7D;&#x7740;&#x8272;&#x5668;" class="headerlink" title="3.&#x52A0;&#x8F7D;&#x7740;&#x8272;&#x5668;"></a>3.&#x52A0;&#x8F7D;&#x7740;&#x8272;&#x5668;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-编译着色器"><span class="nav-number">1.3.4.</span> <span class="nav-text"><a href="#4-&#x7F16;&#x8BD1;&#x7740;&#x8272;&#x5668;" class="headerlink" title="4.&#x7F16;&#x8BD1;&#x7740;&#x8272;&#x5668;"></a>4.&#x7F16;&#x8BD1;&#x7740;&#x8272;&#x5668;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-链接着色器"><span class="nav-number">1.3.5.</span> <span class="nav-text"><a href="#5-&#x94FE;&#x63A5;&#x7740;&#x8272;&#x5668;" class="headerlink" title="5.&#x94FE;&#x63A5;&#x7740;&#x8272;&#x5668;"></a>5.&#x94FE;&#x63A5;&#x7740;&#x8272;&#x5668;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、准备数据"><span class="nav-number">1.4.</span> <span class="nav-text"><a href="#&#x4E09;&#x3001;&#x51C6;&#x5907;&#x6570;&#x636E;" class="headerlink" title="&#x4E09;&#x3001;&#x51C6;&#x5907;&#x6570;&#x636E;"></a>&#x4E09;&#x3001;&#x51C6;&#x5907;&#x6570;&#x636E;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-坐标"><span class="nav-number">1.4.1.</span> <span class="nav-text"><a href="#1-&#x5750;&#x6807;" class="headerlink" title="1.&#x5750;&#x6807;"></a>1.&#x5750;&#x6807;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-生成顶点数据"><span class="nav-number">1.4.2.</span> <span class="nav-text"><a href="#2-&#x751F;&#x6210;&#x9876;&#x70B9;&#x6570;&#x636E;" class="headerlink" title="2.&#x751F;&#x6210;&#x9876;&#x70B9;&#x6570;&#x636E;"></a>2.&#x751F;&#x6210;&#x9876;&#x70B9;&#x6570;&#x636E;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-生成顶点缓存对象"><span class="nav-number">1.4.3.</span> <span class="nav-text"><a href="#3-&#x751F;&#x6210;&#x9876;&#x70B9;&#x7F13;&#x5B58;&#x5BF9;&#x8C61;" class="headerlink" title="3.&#x751F;&#x6210;&#x9876;&#x70B9;&#x7F13;&#x5B58;&#x5BF9;&#x8C61;"></a>3.&#x751F;&#x6210;&#x9876;&#x70B9;&#x7F13;&#x5B58;&#x5BF9;&#x8C61;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-定义顶点解析配置"><span class="nav-number">1.4.4.</span> <span class="nav-text"><a href="#4-&#x5B9A;&#x4E49;&#x9876;&#x70B9;&#x89E3;&#x6790;&#x914D;&#x7F6E;" class="headerlink" title="4.&#x5B9A;&#x4E49;&#x9876;&#x70B9;&#x89E3;&#x6790;&#x914D;&#x7F6E;"></a>4.&#x5B9A;&#x4E49;&#x9876;&#x70B9;&#x89E3;&#x6790;&#x914D;&#x7F6E;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、开始绘制"><span class="nav-number">1.5.</span> <span class="nav-text"><a href="#&#x56DB;&#x3001;&#x5F00;&#x59CB;&#x7ED8;&#x5236;" class="headerlink" title="&#x56DB;&#x3001;&#x5F00;&#x59CB;&#x7ED8;&#x5236;"></a>&#x56DB;&#x3001;&#x5F00;&#x59CB;&#x7ED8;&#x5236;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-开始绘制"><span class="nav-number">1.5.1.</span> <span class="nav-text"><a href="#1-&#x5F00;&#x59CB;&#x7ED8;&#x5236;" class="headerlink" title="1.&#x5F00;&#x59CB;&#x7ED8;&#x5236;"></a>1.&#x5F00;&#x59CB;&#x7ED8;&#x5236;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-将绘制内容展现到屏幕上"><span class="nav-number">1.5.2.</span> <span class="nav-text"><a href="#2-&#x5C06;&#x7ED8;&#x5236;&#x5185;&#x5BB9;&#x5C55;&#x73B0;&#x5230;&#x5C4F;&#x5E55;&#x4E0A;" class="headerlink" title="2.&#x5C06;&#x7ED8;&#x5236;&#x5185;&#x5BB9;&#x5C55;&#x73B0;&#x5230;&#x5C4F;&#x5E55;&#x4E0A;"></a>2.&#x5C06;&#x7ED8;&#x5236;&#x5185;&#x5BB9;&#x5C55;&#x73B0;&#x5230;&#x5C4F;&#x5E55;&#x4E0A;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、释放内存"><span class="nav-number">1.6.</span> <span class="nav-text"><a href="#&#x4E94;&#x3001;&#x91CA;&#x653E;&#x5185;&#x5B58;" class="headerlink" title="&#x4E94;&#x3001;&#x91CA;&#x653E;&#x5185;&#x5B58;"></a>&#x4E94;&#x3001;&#x91CA;&#x653E;&#x5185;&#x5B58;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hank Zhang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

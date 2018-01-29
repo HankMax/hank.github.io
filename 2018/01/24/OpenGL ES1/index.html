@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,OpenGL ES," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介OpenGL（Open Graphics Library）是个定义了一个跨编程语言、跨平台的编程接口，它用于二维或三维图象绘制。OpenGL是个专业的图形程序接口，是一个功能强大，调用方便的底层图形库。 OpenGL ESOpenGL ES（Open Graphics Library for Embedded System）是一套为手持和嵌入式系统设计的2D/3D轻量图形库，它是基于OpenG">
+<meta name="keywords" content="iOS,OpenGL ES">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenGL ES入门(一) —— 概念讲解">
+<meta property="og:url" content="http://yoursite.com/2018/01/24/OpenGL ES1/index.html">
+<meta property="og:site_name" content="Hank&#39;s Zone">
+<meta property="og:description" content="简介OpenGL（Open Graphics Library）是个定义了一个跨编程语言、跨平台的编程接口，它用于二维或三维图象绘制。OpenGL是个专业的图形程序接口，是一个功能强大，调用方便的底层图形库。 OpenGL ESOpenGL ES（Open Graphics Library for Embedded System）是一套为手持和嵌入式系统设计的2D/3D轻量图形库，它是基于OpenG">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/uploads/PipeLine.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ndc.png">
+<meta property="og:image" content="http://yoursite.com/uploads/vertexShader.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Rasterization.png">
+<meta property="og:image" content="http://yoursite.com/uploads/FragmentShader.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Per_Fragment%20Operations.png">
+<meta property="og:image" content="http://yoursite.com/uploads/renderBuffer.png">
+<meta property="og:updated_time" content="2018-01-25T08:42:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenGL ES入门(一) —— 概念讲解">
+<meta name="twitter:description" content="简介OpenGL（Open Graphics Library）是个定义了一个跨编程语言、跨平台的编程接口，它用于二维或三维图象绘制。OpenGL是个专业的图形程序接口，是一个功能强大，调用方便的底层图形库。 OpenGL ESOpenGL ES（Open Graphics Library for Embedded System）是一套为手持和嵌入式系统设计的2D/3D轻量图形库，它是基于OpenG">
+<meta name="twitter:image" content="http://yoursite.com/uploads/PipeLine.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/24/OpenGL ES1/"/>
+
+
+
+
+
+  <title>OpenGL ES入门(一) —— 概念讲解 | Hank's Zone</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e6c0060626c68c424035bbec7e39d5cb";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hank's Zone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Hank writing in here</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/24/OpenGL ES1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hank Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/head.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hank's Zone">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenGL ES入门(一) —— 概念讲解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T16:07:34+08:00">
+                2018-01-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习/" itemprop="url" rel="index">
+                    <span itemprop="name">学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="OpenGL"><a href="#OpenGL" class="headerlink" title="OpenGL"></a>OpenGL</h3><p>（Open Graphics Library）是个定义了一个跨编程语言、跨平台的编程接口，它用于二维或三维图象绘制。OpenGL是个专业的图形程序接口，是一个功能强大，调用方便的底层图形库。</p>
+<h3 id="OpenGL-ES"><a href="#OpenGL-ES" class="headerlink" title="OpenGL ES"></a>OpenGL ES</h3><p>OpenGL ES（Open Graphics Library for Embedded System）是一套为手持和嵌入式系统设计的2D/3D轻量图形库，它是基于OpenGL API设计的，是OpenGL三维图形API的一个子集。OpenGL ES是从OpenGL裁剪定制而来的，它去除了OpenGL中很多特性，并针对移动设备改善了图形显示效果，大大降低了内存消耗。<br><a id="more"></a></p>
+<h2 id="OpenGL-ES渲染流程"><a href="#OpenGL-ES渲染流程" class="headerlink" title="OpenGL ES渲染流程"></a>OpenGL ES渲染流程</h2><p>在OpenGL ES中，任何事物都在3D空间中，而屏幕却是2D像素数组，这导致OpenGL ES的大部分工作都是关于把3D坐标转变为适应你屏幕的2D像素。<br>3D坐标转为2D坐标的处理过程是由OpenGL的图形渲染管线（Graphics Pipeline，大多译为管线，实际上指的是一堆原始图形数据途经一个输送管道，期间经过各种变化处理最终出现在屏幕的过程）管理的。<br>图形渲染管线可以被划分为两个主要部分：第一部分把你的3D坐标转换为2D坐标，第二部分是把2D坐标转变为实际的有颜色的像素。<br><img src="/uploads/PipeLine.png" alt="">  </p>
+<h3 id="顶点输入"><a href="#顶点输入" class="headerlink" title="顶点输入"></a>顶点输入</h3><p>开始绘制图形之前，我们必须先给OpenGL ES输入一些顶点数据。OpenGL ES是一个3D图形库，所以我们在OpenGL ES中指定的所有坐标都是3D坐标（x、y和z）。<br>OpenGL不是简单地把所有的3D坐标变换为屏幕上的2D像素；OpenGL仅当3D坐标在3个轴（x、y和z）上都为-1.0到1.0的范围内时才处理它。<br>所有在所谓的标准化设备坐标(Normalized Device Coordinates)范围内的坐标才会最终呈现在屏幕上（在这个范围以外的坐标都不会显示）。<br><strong>标准化设备坐标:</strong></p>
+<blockquote>
+<p>标准化设备坐标(Normalized Device Coordinates, NDC)<br>一旦你的顶点坐标已经在顶点着色器中处理过，它们就应该是标准化设备坐标了，标准化设备坐标是一个x、y和z值在-1.0到1.0的一小段空间。任何落在范围外的坐标都会被丢弃/裁剪，不会显示在你的屏幕上。下面你会看到我们定义的在标准化设备坐标中的三角形(忽略z轴)：<br><img src="/uploads/ndc.png" alt=""><br>与通常的屏幕坐标不同，y轴正方向为向上，(0, 0)坐标是这个图像的中心，而不是左上角。最终你希望所有(变换过的)坐标都在这个坐标空间中，否则它们就不可见了。<br>你的标准化设备坐标接着会变换为屏幕空间坐标(Screen-space Coordinates)，这是使用你通过glViewport函数提供的数据，进行视口变换(Viewport Transform)完成的。所得的屏幕空间坐标又会被变换为片段输入到片段着色器中。</p>
+</blockquote>
+<p>一组顶点数据:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GLfloat vertexs[] = &#123;</span><br><span class="line">    //顶点坐标            //顶点颜色</span><br><span class="line">    -0.5, -0.5, 0.0,    1.0,0.0,0.0,1.0,</span><br><span class="line">     0.0,  0.5, 0.0,    1.0,0.0,0.0,1.0,</span><br><span class="line">     0.5, -0.5, 0.0,    1.0,0.0,0.0,1.0,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="Vertex-Arrays-Buffer-Objects"><a href="#Vertex-Arrays-Buffer-Objects" class="headerlink" title="Vertex Arrays / Buffer Objects"></a>Vertex Arrays / Buffer Objects</h3><p><strong>VBO(Vertex Buffer Objects):</strong>顶点缓存对象,用来管理和发送顶点数据到GPU中    </p>
+<p><strong>VAO(Vertex Arrays Objects):</strong>顶点数组对象,它封装了与顶点处理器相关的所有数据。它没有包含实际的数据，而是引用顶点缓冲区、索引缓冲区和顶点本身。</p>
+<h3 id="Vertex-Shader-顶点着色器"><a href="#Vertex-Shader-顶点着色器" class="headerlink" title="Vertex Shader(顶点着色器)"></a>Vertex Shader(顶点着色器)</h3><p>处理顶点相关的数据，包括顶点在屏幕的位置（矩阵变换），顶点处的光照计算，纹理坐标等。</p>
+<p>顶点着色器的信号图：<br><img src="/uploads/vertexShader.png" alt=""></p>
+<ul>
+<li><p><strong>输入信号</strong> Attributes、Uniforms、Samplers (optional)</p>
+<ul>
+<li><p><strong>Attributes</strong>:顶点属性,包括坐标,颜色,纹理等</p>
+</li>
+<li><p><strong>Uniforms</strong>: 是一个全局常量，它可以被着色器程序的任意着色器在任意阶段访问</p>
+</li>
+<li><p><strong>Samplers(可选的)</strong>: 是一个特殊的 Uniforms 保存的是 Texteures（纹理） 数据；</p>
+</li>
+</ul>
+</li>
+<li><p><strong>输出信号</strong>: Varying、gl_Position、gl_FrontFacing、gl_PointSize</p>
+<ul>
+<li><p><strong>Varying</strong>:它是 Vertex Shader 与 Fragment Shader 的接口，是为了解决功能性问题（两个 Shader 的信息交互）；</p>
+</li>
+<li><p><strong>gl_Position(highp vec4 内建变量)</strong>:就是 Vertex Position，Vertex Shader 的输出值，而且是必须要赋值的变量；只有在 Vertex Shader 中使用才会有效**；</p>
+</li>
+<li><p><strong>gl_PointSize ( mediump float 内建变量)</strong>:告诉 Vertex Shader 栅格化点的尺寸（pixels,像素化），想要改变绘制点的大小就是要用这个变量 只有在 Vertex Shader 中使用才会有效；</p>
+</li>
+<li><p><strong>gl_FrontFacing ( bool 内建变量)</strong>:改变渲染物体的 Front Facing 和 Back Facing , 是用于处理物体光照问题的变量，双面光照（3D 物体里外光照）问题的时候才会使用的变量，只能在 Vertex Shader 中进行设置， Fragment Shader 是只读的；</p>
+</li>
+</ul>
+</li>
+<li><strong>交互信息</strong>： Temporary Variables<ul>
+<li><strong>Temporary Variables</strong>:临时变量</li>
+</ul>
+</li>
+</ul>
+<h3 id="Primitive-Assembly（图元装配）："><a href="#Primitive-Assembly（图元装配）：" class="headerlink" title="Primitive Assembly（图元装配）："></a>Primitive Assembly（图元装配）：</h3><p>图元装配(Primitive Assembly)阶段将顶点着色器输出的所有顶点作为输入（如果是GL_POINTS，那么就是一个顶点），并所有的点装配成指定图元的形状</p>
+<p>第一步，把 Vertex Shader 处理后的顶点数据组织成 OpenGL ES 可以直接渲染的基本图元：点、线、三角形；</p>
+<p>第二步，裁剪 ( Clipping ) ，只保留在渲染区域（视锥体，视觉区域）内的图元；</p>
+<p>第三步，剔除 ( Culling )，可通过编程决定剔除前面、后面、还是全部；</p>
+<h3 id="Rasterization-光栅化-："><a href="#Rasterization-光栅化-：" class="headerlink" title="Rasterization ( 光栅化 ) ："></a>Rasterization ( 光栅化 ) ：</h3><p>光栅化信号图:<img src="/uploads/Rasterization.png" alt="">  </p>
+<p>作用是，将基本图元（点、线、三角形）转换成二维的片元（Fragment, 包含二维坐标、颜色值、纹理坐标等等属性）, 像素化基本图元使其可以在屏幕上进行绘制（显示）。</p>
+<h3 id="Texture-Memory-纹理内存"><a href="#Texture-Memory-纹理内存" class="headerlink" title="Texture Memory ( 纹理内存 ) :"></a>Texture Memory ( 纹理内存 ) :</h3><p>Texture 就是指保存了图片（位图）的所有颜色的缓存；Texture Memory 就是图片的颜色（像素）内存；每一个嵌入式系统对 Texture Memory 的大小都是有限制的；</p>
+<ul>
+<li><p>向上指向 Vertex Shader 的虚线，意指 Texture Coordinate （纹理坐标）信息是通过程序提供给它的；</p>
+</li>
+<li><p>向下指向Fragment Shader 的实线，Fragment Shader 处理的是光栅化后的数据，即像素数据，而 Texture 本身就是像素数据，所以 Texture Memory 可以直接当成 Fragment Shader 的输入；</p>
+</li>
+</ul>
+<h3 id="Fragment-Shader-片元着色器-："><a href="#Fragment-Shader-片元着色器-：" class="headerlink" title="Fragment Shader (片元着色器)："></a>Fragment Shader (片元着色器)：</h3><p>片元着色器信号图：<img src="/uploads/FragmentShader.png" alt="">  </p>
+<ul>
+<li><p><strong>输入的内建变量</strong></p>
+<ul>
+<li><p><strong>gl_FragCoord(mediump vec4 只读变量)</strong>:  是保存窗口相对坐标的 { x, y, z, 1/w } 的变量，z 表示深度 （will be used for the fragment’s depth）, w 表示旋转；</p>
+</li>
+<li><p><strong>gl_PointCoord (mediump int 只读变量)</strong> :<br>是包含了当前片元原始点位置的二维坐标；点的范围是 [ 0, 1 ] ;</p>
+</li>
+</ul>
+</li>
+<li><p><strong>输出信号(内建变量)</strong>:</p>
+<ul>
+<li><strong>gl_FragColor(mediuump vec4)</strong>:片元的颜色值</li>
+</ul>
+</li>
+</ul>
+<h3 id="Per-Fragment-Operations-每个片段操作"><a href="#Per-Fragment-Operations-每个片段操作" class="headerlink" title="Per-Fragment Operations(每个片段操作):"></a>Per-Fragment Operations(每个片段操作):</h3><p>信号图:<img src="/uploads/Per_Fragment Operations.png" alt="">  </p>
+<ul>
+<li><p><strong>Pixel ownership test ( 像素归属测试 )</strong> ：<br>判断像素在 Framebuffer 中的位置是不是为当前 OpenGL ES Context 所有，即测试某个像素是否属于当前的 Context 或是否被展示（是否被用户可见）；</p>
+</li>
+<li><p><strong>Scissor Test ( 裁剪测试 )</strong> ：<br>判断像素是否在由 glScissor* 定义的裁剪区域内，不在该剪裁区域内的像素就会被丢弃掉；</p>
+</li>
+<li><p><strong>Stencil Test ( 模版测试 )</strong>：<br>将模版缓存中的值与一个参考值进行比较，从而进行相应的处理；</p>
+</li>
+<li><p><strong>Depth Test ( 深度测试 )</strong> ：<br>比较下一个片段与帧缓冲区中的片段的深度，从而决定哪一个像素在前面，哪一个像素被遮挡；</p>
+</li>
+<li><p><strong>Blending ( 混合 )</strong> ：<br>将片段的颜色和帧缓存中已有的颜色值进行混合，并将混合所得的新值写入帧缓存 （FrameBuffer） ；</p>
+</li>
+<li><p><strong>Dithering ( 抖动 )</strong> ：<br>使用有限的色彩让你看到比实际图象更为丰富的色彩显示方式，以缓解表示颜色的值的精度不够大而导致颜色剧变的问题。</p>
+</li>
+</ul>
+<h3 id="Render-Buffer-amp-Frame-Buffer"><a href="#Render-Buffer-amp-Frame-Buffer" class="headerlink" title="Render Buffer &amp; Frame Buffer:"></a>Render Buffer &amp; Frame Buffer:</h3><p>关系图:<img src="/uploads/renderBuffer.png" alt=""> </p>
+<ul>
+<li><p><strong>Render Buffer( 渲染缓存 )</strong>:</p>
+<ul>
+<li>简称 RBO , Render Buffer Object；</li>
+<li>是由程序（Application）分配的 2D 图片缓存；</li>
+<li>Render Buffer 可以分配和存储颜色（color）、深度（depth）、模版（stectil）值，也可以把这三种值装载到 Frame Buffer 里面；</li>
+</ul>
+</li>
+<li><p><strong>Frame Buffer ( 帧缓存 )</strong>:</p>
+<ul>
+<li>简称 FBO , Frame Buffer Object；</li>
+<li>是颜色、深度、模板缓存装载在 FBO 上所有装载点的合集；</li>
+<li>描述颜色、深度、模板的大小和类型的属性状态；</li>
+<li>描述 Texture 名称的属性状态；</li>
+<li>描述装载在 FBO 上的 Render Buffer Objects ( 渲染缓存对象 ) 的属性状态；</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>扩充知识(FBO)</strong></p>
+<ol>
+<li>只能通过 OpenGL ES 命令 ( API ) 创建 FBO 对象；  </li>
+<li>使用一个 EGL Context 去创建和使用多个 FBO , 即不要为每一个 FBO 对象创建一个正在渲染的上下文（rendering context）；</li>
+<li>创建 off-screen 的颜色、深度、模板渲染缓存和纹理需要装载在 FBO 上；</li>
+<li>通过多个 FBO 来共享颜色、深度、模板缓存；</li>
+<li>正确地装载纹理的颜色或深度到 FBO 中，避免复制操作；</li>
+</ol>
+</blockquote>
+<h2 id="OpenGL-ES在iOS中的应用"><a href="#OpenGL-ES在iOS中的应用" class="headerlink" title="OpenGL ES在iOS中的应用"></a>OpenGL ES在iOS中的应用</h2><h3 id="CAEAGLLayer"><a href="#CAEAGLLayer" class="headerlink" title="CAEAGLLayer"></a>CAEAGLLayer</h3><p>CAEAGLLayer类支持在iPhone应用程序中绘制OpenGL内容。<br>如果您打算使用OpenGL进行呈现，请使用这个类作为视图的支持层，从您的视图的layerClass类方法中返回它。<br>返回的CAEAGLLayer对象是一个与OpenGL ES函数调用完全兼容的核心动画表面的包装器。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setupCAEAGLLayer &#123;</span><br><span class="line">    _eaglLayer = [<span class="built_in">CAEAGLLayer</span> layer];</span><br><span class="line">    _eaglLayer.frame = <span class="keyword">self</span>.view.frame;</span><br><span class="line">    _eaglLayer.opaque = <span class="literal">YES</span>; <span class="comment">//CALayer默认是透明的</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 描绘属性：这里不维持渲染内容</span></span><br><span class="line">    <span class="comment">// kEAGLDrawablePropertyRetainedBacking:若为YES，则使用glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)计算得到的最终结果颜色的透明度会考虑目标颜色的透明度值。</span></span><br><span class="line">    <span class="comment">// 若为NO，则不考虑目标颜色的透明度值，将其当做1来处理。</span></span><br><span class="line">    <span class="comment">// 使用场景：目标颜色为非透明，源颜色有透明度，若设为YES，则使用glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)得到的结果颜色会有一定的透明度（与实际不符）。若未NO则不会（符合实际）。</span></span><br><span class="line">    _eaglLayer.drawableProperties = [<span class="built_in">NSDictionary</span> dictionaryWithObjectsAndKeys:[<span class="built_in">NSNumber</span> numberWithBool:<span class="literal">NO</span>],kEAGLDrawablePropertyRetainedBacking,kEAGLColorFormatRGBA8,kEAGLDrawablePropertyColorFormat, <span class="literal">nil</span>];</span><br><span class="line">    [<span class="keyword">self</span>.view.layer addSublayer:_eaglLayer];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果在viewController中，使用[self.view.layer addSublayer:eaglLayer];<br>如果在view中，可以直接重写UIView的layerClass类方法即可</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (Class)layerClass &#123;</span><br><span class="line">     <span class="keyword">return</span> [<span class="built_in">CAEAGLLayer</span> <span class="keyword">class</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="EAGLContext"><a href="#EAGLContext" class="headerlink" title="EAGLContext"></a>EAGLContext</h3><p>EAGLContext对象管理着OpenGLES的渲染context，即所有绘制的状态，命令及资源信息，并控制GPU去执行渲染运算。  </p>
+<p>绘制如textures及renderbuffers的过程，是由一个与context绑定的EAGLSharegroup对象来管理的。当初始化一个EAGLContext对象的时候，可选择新建一个sharegroup，或者使用已有的，这一点我们往往采用系统默认即可。在绘制到context之前，我们要先绑定一个完整的framebuffer对象到context中。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_eaglContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; <span class="comment">//选择OpenGLES API版本</span></span><br><span class="line">  [EAGLContext setCurrentContext:_eaglContext]; <span class="comment">//设置为当前上下文。</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="RenderBuffer"><a href="#RenderBuffer" class="headerlink" title="RenderBuffer"></a>RenderBuffer</h3><p>RenderBuffer用于存储渲染的内容<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setupRenderBuffer &#123;</span><br><span class="line">    <span class="keyword">if</span> (_colorRenderBuffer) &#123;</span><br><span class="line">        glDeleteRenderbuffers(<span class="number">1</span>, &amp;_colorRenderBuffer);</span><br><span class="line">        _colorRenderBuffer = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成一个renderBuffer，id是_colorRenderBuffer</span></span><br><span class="line">    glGenRenderbuffers(<span class="number">1</span>, &amp;_colorRenderBuffer);</span><br><span class="line">    <span class="comment">// 设置为当前renderBuffer，则后面引用GL_RENDERBUFFER，即指的是_colorRenderBuffer</span></span><br><span class="line">    glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);</span><br><span class="line">    <span class="comment">//为color renderbuffer 分配存储空间</span></span><br><span class="line">    [_eaglContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="FrameBuffer"><a href="#FrameBuffer" class="headerlink" title="FrameBuffer"></a>FrameBuffer</h3><p>OpenGlES的FrameBuffer包含：renderBuffer，depthBuffer，stencilBuffer和accumulationBuffer。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setupFrameBuffer &#123;</span><br><span class="line">    <span class="keyword">if</span> (_frameBuffer) &#123;</span><br><span class="line">        glDeleteFramebuffers(<span class="number">1</span>, &amp;_frameBuffer);</span><br><span class="line">        _frameBuffer = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// FBO用于管理colorRenderBuffer，离屏渲染</span></span><br><span class="line">    glGenFramebuffers(<span class="number">1</span>, &amp;_frameBuffer);</span><br><span class="line">    <span class="comment">//设置为当前framebuffer</span></span><br><span class="line">    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);</span><br><span class="line">    <span class="comment">// 将 _colorRenderBuffer 装配到 GL_COLOR_ATTACHMENT0 这个装配点上</span></span><br><span class="line">    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/OpenGL-ES/" rel="tag"># OpenGL ES</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/19/Core Animation/" rel="next" title="iOS动画总结">
+                <i class="fa fa-chevron-left"></i> iOS动画总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/25/OpenGL ES2/" rel="prev" title="OpenGL ES入门(二) ——画个三角形">
+                OpenGL ES入门(二) ——画个三角形 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjE2Ny84NzMx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/head.png"
+                alt="Hank Zhang" />
+            
+              <p class="site-author-name" itemprop="name">Hank Zhang</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap Show me the code</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x7B80;&#x4ECB;" class="headerlink" title="&#x7B80;&#x4ECB;"></a>&#x7B80;&#x4ECB;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenGL"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#OpenGL" class="headerlink" title="OpenGL"></a>OpenGL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenGL-ES"><span class="nav-number">1.2.</span> <span class="nav-text"><a href="#OpenGL-ES" class="headerlink" title="OpenGL ES"></a>OpenGL ES</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenGL-ES渲染流程"><span class="nav-number">2.</span> <span class="nav-text"><a href="#OpenGL-ES&#x6E32;&#x67D3;&#x6D41;&#x7A0B;" class="headerlink" title="OpenGL ES&#x6E32;&#x67D3;&#x6D41;&#x7A0B;"></a>OpenGL ES&#x6E32;&#x67D3;&#x6D41;&#x7A0B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顶点输入"><span class="nav-number">2.1.</span> <span class="nav-text"><a href="#&#x9876;&#x70B9;&#x8F93;&#x5165;" class="headerlink" title="&#x9876;&#x70B9;&#x8F93;&#x5165;"></a>&#x9876;&#x70B9;&#x8F93;&#x5165;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vertex-Arrays-Buffer-Objects"><span class="nav-number">2.2.</span> <span class="nav-text"><a href="#Vertex-Arrays-Buffer-Objects" class="headerlink" title="Vertex Arrays / Buffer Objects"></a>Vertex Arrays / Buffer Objects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vertex-Shader-顶点着色器"><span class="nav-number">2.3.</span> <span class="nav-text"><a href="#Vertex-Shader-&#x9876;&#x70B9;&#x7740;&#x8272;&#x5668;" class="headerlink" title="Vertex Shader(&#x9876;&#x70B9;&#x7740;&#x8272;&#x5668;)"></a>Vertex Shader(&#x9876;&#x70B9;&#x7740;&#x8272;&#x5668;)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Primitive-Assembly（图元装配）："><span class="nav-number">2.4.</span> <span class="nav-text"><a href="#Primitive-Assembly&#xFF08;&#x56FE;&#x5143;&#x88C5;&#x914D;&#xFF09;&#xFF1A;" class="headerlink" title="Primitive Assembly&#xFF08;&#x56FE;&#x5143;&#x88C5;&#x914D;&#xFF09;&#xFF1A;"></a>Primitive Assembly&#xFF08;&#x56FE;&#x5143;&#x88C5;&#x914D;&#xFF09;&#xFF1A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rasterization-光栅化-："><span class="nav-number">2.5.</span> <span class="nav-text"><a href="#Rasterization-&#x5149;&#x6805;&#x5316;-&#xFF1A;" class="headerlink" title="Rasterization ( &#x5149;&#x6805;&#x5316; ) &#xFF1A;"></a>Rasterization ( &#x5149;&#x6805;&#x5316; ) &#xFF1A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Texture-Memory-纹理内存"><span class="nav-number">2.6.</span> <span class="nav-text"><a href="#Texture-Memory-&#x7EB9;&#x7406;&#x5185;&#x5B58;" class="headerlink" title="Texture Memory ( &#x7EB9;&#x7406;&#x5185;&#x5B58; ) :"></a>Texture Memory ( &#x7EB9;&#x7406;&#x5185;&#x5B58; ) :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fragment-Shader-片元着色器-："><span class="nav-number">2.7.</span> <span class="nav-text"><a href="#Fragment-Shader-&#x7247;&#x5143;&#x7740;&#x8272;&#x5668;-&#xFF1A;" class="headerlink" title="Fragment Shader (&#x7247;&#x5143;&#x7740;&#x8272;&#x5668;)&#xFF1A;"></a>Fragment Shader (&#x7247;&#x5143;&#x7740;&#x8272;&#x5668;)&#xFF1A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Per-Fragment-Operations-每个片段操作"><span class="nav-number">2.8.</span> <span class="nav-text"><a href="#Per-Fragment-Operations-&#x6BCF;&#x4E2A;&#x7247;&#x6BB5;&#x64CD;&#x4F5C;" class="headerlink" title="Per-Fragment Operations(&#x6BCF;&#x4E2A;&#x7247;&#x6BB5;&#x64CD;&#x4F5C;):"></a>Per-Fragment Operations(&#x6BCF;&#x4E2A;&#x7247;&#x6BB5;&#x64CD;&#x4F5C;):</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Render-Buffer-amp-Frame-Buffer"><span class="nav-number">2.9.</span> <span class="nav-text"><a href="#Render-Buffer-amp-Frame-Buffer" class="headerlink" title="Render Buffer &amp; Frame Buffer:"></a>Render Buffer &amp; Frame Buffer:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenGL-ES在iOS中的应用"><span class="nav-number">3.</span> <span class="nav-text"><a href="#OpenGL-ES&#x5728;iOS&#x4E2D;&#x7684;&#x5E94;&#x7528;" class="headerlink" title="OpenGL ES&#x5728;iOS&#x4E2D;&#x7684;&#x5E94;&#x7528;"></a>OpenGL ES&#x5728;iOS&#x4E2D;&#x7684;&#x5E94;&#x7528;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CAEAGLLayer"><span class="nav-number">3.1.</span> <span class="nav-text"><a href="#CAEAGLLayer" class="headerlink" title="CAEAGLLayer"></a>CAEAGLLayer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EAGLContext"><span class="nav-number">3.2.</span> <span class="nav-text"><a href="#EAGLContext" class="headerlink" title="EAGLContext"></a>EAGLContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RenderBuffer"><span class="nav-number">3.3.</span> <span class="nav-text"><a href="#RenderBuffer" class="headerlink" title="RenderBuffer"></a>RenderBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FrameBuffer"><span class="nav-number">3.4.</span> <span class="nav-text"><a href="#FrameBuffer" class="headerlink" title="FrameBuffer"></a>FrameBuffer</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hank Zhang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
